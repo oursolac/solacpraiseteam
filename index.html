@@ -1,29 +1,25 @@
 <!DOCTYPE html>
-
 <html lang="ko">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-    <title>찬양팀 스케줄러</title>
-
-    <style>
-
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; }
-
-        iframe { width: 100%; height: 100%; border: none; }
-
-    </style>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>찬양팀 스케줄링 앱 로딩중...</title>
+    <script>
+        // 우리가 만든 구글 앱스 스크립트의 실제 URL (수정 필요)
+        var googleAppUrl = "https://script.google.com/macros/s/AKfycbxB-DT1nAzEVyrUFTt5VKLaAgu9JevhVinNACtgPqML/exec";
+        
+        var userAgent = navigator.userAgent.toLowerCase();
+        
+        if (userAgent.indexOf('kakaotalk') > -1) {
+            // 카카오톡이면 크롬/사파리 등 외부 브라우저로 강제 사출
+            window.location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(googleAppUrl);
+        } else {
+            // 카카오톡이 아니면(일반 브라우저면) 그냥 구글 앱으로 이동
+            window.location.href = googleAppUrl;
+        }
+    </script>
 </head>
-
-<body>
-
-    <iframe src="https://script.google.com/macros/s/AKfycbxB-DT1nAzEVyrUFTt5VKLaAgu9JevhVinNACtgPqML/exec"></iframe>
-
+<body style="text-align: center; padding-top: 50px; font-family: sans-serif;">
+    <p>찬양팀 앱으로 이동 중입니다...<br>화면이 넘어가지 않으면 우측 하단(또는 상단)의 메뉴를 눌러<br><b>[다른 브라우저로 열기]</b>를 선택해주세요!</p>
 </body>
-
 </html>
