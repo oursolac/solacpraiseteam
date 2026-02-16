@@ -13,26 +13,31 @@
         .btn { display: inline-block; background: #4a90e2; color: white; text-decoration: none; padding: 15px 20px; border-radius: 10px; font-weight: bold; width: 100%; box-sizing: border-box; cursor: pointer; border: none; font-size: 16px; margin-bottom: 12px; transition: 0.2s; }
         .btn-secondary { background: #333; }
         .btn:active { transform: scale(0.98); }
+        
+        /* 로딩 애니메이션 */
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #4a90e2; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 0 auto 20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="icon">🚀</div>
-        <h2>앱으로 이동 중입니다</h2>
-        <p>만약 3초 후에도 화면이 넘어가지 않거나 에러가 뜬다면, 카카오톡 브라우저 제한 때문입니다.<br><br>아래 버튼을 눌러 안전하게 접속해 주세요!</p>
+        <div class="loader" id="loading-spinner"></div>
+        <div class="icon" id="status-icon" style="display:none;">⚠️</div>
         
-        <a href="#" id="manual-btn" class="btn">🌐 기본 웹 브라우저로 열기</a>
-        <button onclick="copyLink()" class="btn btn-secondary">🔗 링크 복사하기</button>
+        <h2>앱 접속 안내</h2>
+        <p id="status-text">안전한 환경으로 이동 중입니다...<br>잠시만 기다려주세요.</p>
+        
+        <a href="#" id="manual-btn" class="btn" style="display:none;">👉 앱으로 바로 입장하기</a>
+        <button onclick="copyLink()" class="btn btn-secondary">🔗 앱 링크 복사하기</button>
     </div>
 
     <script>
-        // 🚨 여기에 본인의 '구글 앱스 스크립트 웹 앱 주소'를 꼭 다시 넣어주세요! 🚨
+        // 🚨 여기에 본인의 '구글 앱스 스크립트 웹 앱 주소'를 넣으세요! 🚨
         var googleAppUrl = "https://script.google.com/macros/s/AKfycbxB-DT1nAzEVyrUFTt5VKLaAgu9JevhVinNACtgPqML/exec";
         
         // 수동 버튼에 구글 주소 연결
         document.getElementById('manual-btn').href = googleAppUrl;
 
-        // 링크 복사 기능
         function copyLink() {
             var tempInput = document.createElement("input");
             tempInput.value = googleAppUrl;
@@ -40,24 +45,43 @@
             tempInput.select();
             document.execCommand("copy");
             document.body.removeChild(tempInput);
-            alert("✅ 링크가 복사되었습니다!\n인터넷(크롬, 사파리 등) 주소창에 붙여넣기 해주세요.");
+            alert("✅ 링크가 복사되었습니다!\n인터넷 주소창(Safari/Chrome)에 붙여넣기 해주세요.");
         }
 
-        // 스마트 자동 우회 로직 (안드로이드 / 아이폰 분리)
-        var userAgent = navigator.userAgent.toLowerCase();
-        
-        if (userAgent.indexOf('kakaotalk') > -1) {
-            if (userAgent.indexOf('android') > -1) {
-                // 안드로이드: 크롬 브라우저 강제 호출 (가장 에러 없는 방식)
+        var ua = navigator.userAgent.toLowerCase();
+        var isKakao = ua.indexOf('kakaotalk') > -1;
+        var isAndroid = ua.indexOf('android') > -1;
+        var isIOS = ua.match(/(iphone|ipod|ipad)/);
+
+        // UI를 변경하여 버튼을 보여주는 함수 (자동 전환 실패 대비)
+        function showManualOptions() {
+            document.getElementById('loading-spinner').style.display = 'none';
+            document.getElementById('status-icon').style.display = 'block';
+            document.getElementById('status-text').innerHTML = "애플(Safari) 보안 정책이나 카카오톡 환경으로 인해<br>자동 이동이 차단되었습니다.<br><br>아래 <b>[입장하기]</b> 버튼을 눌러주세요!";
+            document.getElementById('manual-btn').style.display = 'inline-block';
+        }
+
+        if (isKakao) {
+            if (isAndroid) {
+                // 1. 안드로이드 카카오톡 -> 크롬 강제 점프
                 var urlWithoutHttp = googleAppUrl.replace(/^https?:\/\//i, '');
                 window.location.href = 'intent://' + urlWithoutHttp + '#Intent;scheme=https;package=com.android.chrome;end';
-            } else {
-                // 아이폰(iOS): 카카오톡 외부 브라우저 호출 API 사용
+            } else if (isIOS) {
+                // 2. 아이폰 카카오톡 -> 외부 브라우저(Safari) 강제 점프
                 window.location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(googleAppUrl);
             }
+            // 강제 점프가 실행될 시간을 주고, 그래도 화면에 남아있다면 버튼 띄우기
+            setTimeout(showManualOptions, 1500);
+            
         } else {
-            // 카카오톡이 아닌 일반 브라우저(PC, 크롬, 사파리 등) 접속 시: 즉시 이동
-            window.location.href = googleAppUrl;
+            // 3. 카카오톡이 아닌 일반 브라우저(PC 크롬, 모바일 Safari 등)
+            // 사파리는 바로 이동하면 튕겨낼 수 있으므로 0.5초 딜레이 후 대체(replace) 이동
+            setTimeout(function() {
+                window.location.replace(googleAppUrl);
+            }, 500);
+            
+            // 혹시라도 사파리가 차단해서 1.5초 후에도 이 화면에 남아있다면 버튼 표시
+            setTimeout(showManualOptions, 1500);
         }
     </script>
 </body>
