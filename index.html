@@ -1,30 +1,29 @@
 <!DOCTYPE html>
+
 <html lang="ko">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>찬양팀 스케줄링 앱 로딩중...</title>
-    <script>
-        // 🚨 주의: 아래 따옴표 안에 본인의 구글 앱스 스크립트 웹 앱 URL을 넣으세요! 🚨
-        var googleAppUrl = "https://script.google.com/macros/s/AKfycbxB-DT1nAzEVyrUFTt5VKLaAgu9JevhVinNACtgPqML/exec";
-        
-        var userAgent = navigator.userAgent.toLowerCase();
-        
-        if (userAgent.indexOf('kakaotalk') > -1) {
-            // 카카오톡이면 기기 기본 브라우저로 강제 우회
-            window.location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(googleAppUrl);
-        } else {
-            // 카카오톡이 아니면(일반 브라우저면) 바로 구글 앱으로 이동
-            window.location.href = googleAppUrl;
-        }
-    </script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>찬양팀 스케줄러</title>
+
+    <style>
+
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; }
+
+        iframe { width: 100%; height: 100%; border: none; }
+
+    </style>
+
 </head>
-<body style="text-align: center; padding-top: 50px; font-family: sans-serif; background-color:#f0f2f5;">
-    <p style="color:#555; line-height:1.6;">
-        찬양팀 앱으로 안전하게 이동 중입니다... 🚀<br><br>
-        만약 3초 이상 화면이 넘어가지 않는다면<br>
-        화면 우측 하단(또는 상단)의 <b>[ ⋮ ] 메뉴</b>를 눌러<br>
-        <b>[다른 브라우저로 열기]</b>를 선택해주세요!
-    </p>
+
+<body>
+
+    <iframe src="https://script.google.com/macros/s/AKfycbxB-DT1nAzEVyrUFTt5VKLaAgu9JevhVinNACtgPqML/exec"></iframe>
+
 </body>
+
 </html>
