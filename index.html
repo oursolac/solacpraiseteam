@@ -3,23 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>찬양팀 스케줄링 앱 로딩중...</title>
+    <title>찬양팀 스케줄링 앱</title>
+    <style>
+        body { font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; background-color: #f4f6f8; text-align: center; padding-top: 60px; margin: 0; }
+        .container { background: white; max-width: 90%; margin: 0 auto; padding: 40px 20px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .icon { font-size: 40px; margin-bottom: 15px; }
+        h2 { color: #1a1a1a; font-size: 22px; margin-top: 0; margin-bottom: 15px; }
+        p { color: #666; font-size: 15px; line-height: 1.6; margin-bottom: 30px; word-break: keep-all; }
+        .btn { display: inline-block; background: #4a90e2; color: white; text-decoration: none; padding: 15px 20px; border-radius: 10px; font-weight: bold; width: 100%; box-sizing: border-box; cursor: pointer; border: none; font-size: 16px; margin-bottom: 12px; transition: 0.2s; }
+        .btn-secondary { background: #333; }
+        .btn:active { transform: scale(0.98); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">🚀</div>
+        <h2>앱으로 이동 중입니다</h2>
+        <p>만약 3초 후에도 화면이 넘어가지 않거나 에러가 뜬다면, 카카오톡 브라우저 제한 때문입니다.<br><br>아래 버튼을 눌러 안전하게 접속해 주세요!</p>
+        
+        <a href="#" id="manual-btn" class="btn">🌐 기본 웹 브라우저로 열기</a>
+        <button onclick="copyLink()" class="btn btn-secondary">🔗 링크 복사하기</button>
+    </div>
+
     <script>
-        // 우리가 만든 구글 앱스 스크립트의 실제 URL (수정 필요)
+        // 🚨 여기에 본인의 '구글 앱스 스크립트 웹 앱 주소'를 꼭 다시 넣어주세요! 🚨
         var googleAppUrl = "https://script.google.com/macros/s/AKfycbxB-DT1nAzEVyrUFTt5VKLaAgu9JevhVinNACtgPqML/exec";
         
+        // 수동 버튼에 구글 주소 연결
+        document.getElementById('manual-btn').href = googleAppUrl;
+
+        // 링크 복사 기능
+        function copyLink() {
+            var tempInput = document.createElement("input");
+            tempInput.value = googleAppUrl;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+            alert("✅ 링크가 복사되었습니다!\n인터넷(크롬, 사파리 등) 주소창에 붙여넣기 해주세요.");
+        }
+
+        // 스마트 자동 우회 로직 (안드로이드 / 아이폰 분리)
         var userAgent = navigator.userAgent.toLowerCase();
         
         if (userAgent.indexOf('kakaotalk') > -1) {
-            // 카카오톡이면 크롬/사파리 등 외부 브라우저로 강제 사출
-            window.location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(googleAppUrl);
+            if (userAgent.indexOf('android') > -1) {
+                // 안드로이드: 크롬 브라우저 강제 호출 (가장 에러 없는 방식)
+                var urlWithoutHttp = googleAppUrl.replace(/^https?:\/\//i, '');
+                window.location.href = 'intent://' + urlWithoutHttp + '#Intent;scheme=https;package=com.android.chrome;end';
+            } else {
+                // 아이폰(iOS): 카카오톡 외부 브라우저 호출 API 사용
+                window.location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(googleAppUrl);
+            }
         } else {
-            // 카카오톡이 아니면(일반 브라우저면) 그냥 구글 앱으로 이동
+            // 카카오톡이 아닌 일반 브라우저(PC, 크롬, 사파리 등) 접속 시: 즉시 이동
             window.location.href = googleAppUrl;
         }
     </script>
-</head>
-<body style="text-align: center; padding-top: 50px; font-family: sans-serif;">
-    <p>찬양팀 앱으로 이동 중입니다...<br>화면이 넘어가지 않으면 우측 하단(또는 상단)의 메뉴를 눌러<br><b>[다른 브라우저로 열기]</b>를 선택해주세요!</p>
 </body>
 </html>
